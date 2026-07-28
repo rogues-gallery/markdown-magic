@@ -1,0 +1,127 @@
+# Reusable workflow for building and releasing Bun binaries
+name: Build Binary
+
+on:
+  workflow_call:
+    inputs:
+      package_path:
+        description: 'Path to package (e.g., packages/core)'
+        required: true
+        type: string
+      binary_name:
+        description: 'Binary name prefix (e.g., md-magic)'
+        required: true
+        type: string
+      tag_prefix:
+        description: 'Tag prefix for version extraction (e.g., markdown-magic@)'
+        required: true
+        type: string
+      version_tag:
+        description: 'Version tag (e.g., markdown-magic@4.0.5)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            targets: linux-x64,linux-arm64
+          - os: macos-latest
+            targets: darwin-arm64,darwin-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build binaries
+        run: |
+          cd ${{ inputs.package_path }}
+          mkdir -p dist
+          for target in $(echo "${{ matrix.targets }}" | tr ',' ' '); do
+            echo "Building ${{ inputs.binary_name }}-$target..."
+            bun build ./cli.js --compile --minify \
+              --target=bun-$target \
+              --outfile dist/${{ inputs.binary_name }}-$target
+          done
+          ls -la dist/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ inputs.binary_name }}-${{ matrix.os }}
+          path: ${{ inputs.package_path }}/dist/${{ inputs.binary_name }}-*
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build Windows binary
+        shell: bash
+        run: |
+          cd ${{ inputs.package_path }}
+          mkdir -p dist
+          bun build ./cli.js --compile --minify --target=bun-windows-x64 --outfile dist/${{ inputs.binary_name }}-windows-x64.exe
+          ls dist/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ inputs.binary_name }}-windows
+          path: ${{ inputs.package_path }}/dist/${{ inputs.binary_name }}-*
+
+  release:
+    needs: [build, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binaries-${{ inputs.binary_name }}-*
+          path: dist
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -la dist/
+
+      - name: Create checksums
+        run: |
+          cd dist
+          sha256sum ${{ inputs.binary_name }}-* > checksums.txt
+          cat checksums.txt
+
+      - name: Get version
+        id: version
+        run: |
+          TAG="${{ inputs.version_tag }}"
+          VERSION="${TAG#${{ inputs.tag_prefix }}}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ inputs.binary_name }} v${{ steps.version.outputs.version }}
+          files: |
+            dist/${{ inputs.binary_name }}-*
+            dist/checksums.txt
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}

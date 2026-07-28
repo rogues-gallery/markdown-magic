@@ -1,0 +1,247 @@
+// Tests for remote transform
+
+const fs = require('fs')
+const http = require('http')
+const path = require('path')
+const { test } = require('uvu')
+const assert = require('uvu/assert')
+const { markdownMagic } = require('../src')
+const { FIXTURE_DIR, MARKDOWN_FIXTURE_DIR, OUTPUT_DIR } = require('./config')
+
+// Temp fixture directory for dynamic test files
+const TEMP_FIXTURE_DIR = path.join(FIXTURE_DIR, 'temp-remote')
+
+function getNewFile(result) {
+  if (!result.results || !result.results[0]) {
+    return null
+  }
+  return result.results[0].outputPath
+}
+
+function ensureDir(dir) {
+  fs.mkdirSync(dir, { recursive: true })
+}
+
+const SILENT = true
+
+function listen(server) {
+  return new Promise((resolve) => {
+    server.listen(0, () => {
+      resolve(server.address().port)
+    })
+  })
+}
+
+function close(server) {
+  return new Promise((resolve, reject) => {
+    server.close((err) => {
+      if (err) return reject(err)
+      resolve()
+    })
+  })
+}
+
+test('remote - fetches content from URL', async () => {
+  const fileName = 'transform-remote.md'
+  const filePath = path.join(MARKDOWN_FIXTURE_DIR, fileName)
+
+  const result = await markdownMagic(filePath, {
+    open: 'doc-block',
+    close: '/doc-block',
+    outputDir: OUTPUT_DIR,
+    applyTransformsToSource: false,
+    silent: SILENT
+  })
+
+  const newContent = fs.readFileSync(getNewFile(result), 'utf8')
+  assert.ok(newContent.match(/Stop scammers from the manipulating DOM/), 'remote content fetched')
+})
+
+test('remote - throws on missing url option', async () => {
+  const content = `<!-- docs remote -->
+original
+<!-- /docs -->`
+
+  ensureDir(TEMP_FIXTURE_DIR)
+  const tempFile = path.join(TEMP_FIXTURE_DIR, 'remote-no-url.md')
+  fs.writeFileSync(tempFile, content)
+
+  let threw = false
+  try {
+    await markdownMagic(tempFile, {
+      open: 'docs',
+      close: '/docs',
+      outputDir: OUTPUT_DIR,
+      applyTransformsToSource: false,
+      silent: SILENT
+    })
+  } catch (err) {
+    threw = true
+    assert.ok(err.message.includes('Invalid URL'), 'throws Invalid URL error')
+  }
+  assert.ok(threw, 'should throw on missing url')
+})
+
+test('remote - throws on invalid URL', async () => {
+  const content = `<!-- docs remote url='https://invalid-url-that-does-not-exist-xyz.com/file.md' -->
+original content
+<!-- /docs -->`
+
+  ensureDir(TEMP_FIXTURE_DIR)
+  const tempFile = path.join(TEMP_FIXTURE_DIR, 'remote-invalid.md')
+  fs.writeFileSync(tempFile, content)
+
+  let threw = false
+  try {
+    await markdownMagic(tempFile, {
+      open: 'docs',
+      close: '/docs',
+      outputDir: OUTPUT_DIR,
+      applyTransformsToSource: false,
+      silent: SILENT
+    })
+  } catch (err) {
+    threw = true
+    assert.ok(err.message.includes('ENOTFOUND') || err.message.includes('failed'), 'throws network error')
+  }
+  assert.ok(threw, 'should throw on invalid URL')
+})
+
+test('remote - throws on HTTP 404 response', async () => {
+  const content = `<!-- docs remote url='https://raw.githubusercontent.com/DavidWells/markdown-magic/master/THIS_FILE_DOES_NOT_EXIST.md' -->
+original content
+<!-- /docs -->`
+
+  ensureDir(TEMP_FIXTURE_DIR)
+  const tempFile = path.join(TEMP_FIXTURE_DIR, 'remote-404.md')
+  fs.writeFileSync(tempFile, content)
+
+  let threw = false
+  try {
+    await markdownMagic(tempFile, {
+      open: 'docs',
+      close: '/docs',
+      outputDir: OUTPUT_DIR,
+      applyTransformsToSource: false,
+      silent: SILENT
+    })
+  } catch (err) {
+    threw = true
+    assert.ok(err.message.includes('status 404') || err.message.includes('404'), 'throws HTTP status error')
+    assert.ok(err.message.includes(`Source markdown: ${tempFile}:1:0`), 'includes source markdown block location')
+    assert.ok(err.message.includes(`Fix "https://raw.githubusercontent.com/DavidWells/markdown-magic/master/THIS_FILE_DOES_NOT_EXIST.md" value in ${tempFile}:1:0`), 'includes fix location')
+  }
+  assert.ok(threw, 'should throw on 404 response')
+})
+
+test('remote - fetches raw markdown from GitHub', async () => {
+  const content = `<!-- docs remote url='https://raw.githubusercontent.com/DavidWells/types-with-jsdocs/master/README.md' -->
+original
+<!-- /docs -->`
+
+  ensureDir(TEMP_FIXTURE_DIR)
+  const tempFile = path.join(TEMP_FIXTURE_DIR, 'remote-github.md')
+  fs.writeFileSync(tempFile, content)
+
+  const result = await markdownMagic(tempFile, {
+    open: 'docs',
+    close: '/docs',
+    outputDir: OUTPUT_DIR,
+    applyTransformsToSource: false,
+    silent: SILENT
+  })
+
+  const outputFile = getNewFile(result)
+  assert.ok(outputFile, 'result has output path')
+  const newContent = fs.readFileSync(outputFile, 'utf8')
+  // Should contain content from the remote file (JSDoc-related content)
+  assert.ok(
+    newContent.includes('JSDoc') || newContent.includes('types') || newContent.includes('TypeScript'),
+    'remote GitHub content fetched'
+  )
+})
+
+test('remote - fetches markdown from GitHub blob URL', async () => {
+  const content = `<!-- docs remote url='https://github.com/DavidWells/markdown-magic/blob/master/README.md' removeLeadingH1 -->
+original
+<!-- /docs -->`
+
+  ensureDir(TEMP_FIXTURE_DIR)
+  const tempFile = path.join(TEMP_FIXTURE_DIR, 'remote-github-blob.md')
+  fs.writeFileSync(tempFile, content)
+
+  const result = await markdownMagic(tempFile, {
+    open: 'docs',
+    close: '/docs',
+    outputDir: OUTPUT_DIR,
+    applyTransformsToSource: false,
+    silent: SILENT
+  })
+
+  const outputFile = getNewFile(result)
+  assert.ok(outputFile, 'result has output path')
+  const newContent = fs.readFileSync(outputFile, 'utf8')
+  assert.ok(newContent.includes('Markdown Magic'), 'remote GitHub blob content fetched')
+  assert.not.ok(newContent.includes('# Markdown Magic'), 'markdown formatting options still apply')
+})
+
+test('remote - extracts markdown sections and heading levels', async () => {
+  const server = http.createServer((req, res) => {
+    res.setHeader('content-type', 'text/markdown')
+    res.end(`# Package
+
+## Install
+
+Install docs.
+
+### Browser
+
+Browser docs.
+
+## Usage
+
+Usage docs.
+
+## License
+
+MIT.
+`)
+  })
+
+  const port = await listen(server)
+
+  try {
+    const content = `<!-- docs remote
+  url='http://127.0.0.1:${port}/README.md'
+  sections="Install"
+  headings={[3]}
+  removeLeadingH1
+  shiftHeaders=1
+-->
+original
+<!-- /docs -->`
+
+    ensureDir(TEMP_FIXTURE_DIR)
+    const tempFile = path.join(TEMP_FIXTURE_DIR, 'remote-sections.md')
+    fs.writeFileSync(tempFile, content)
+
+    const result = await markdownMagic(tempFile, {
+      open: 'docs',
+      close: '/docs',
+      outputDir: OUTPUT_DIR,
+      applyTransformsToSource: false,
+      silent: SILENT
+    })
+
+    const newContent = fs.readFileSync(getNewFile(result), 'utf8')
+    assert.ok(newContent.includes('### Install'), 'selected section was included and shifted')
+    assert.ok(newContent.includes('#### Browser'), 'nested heading was included and shifted')
+    assert.is(newContent.match(/Browser docs/g).length, 1, 'nested heading content was not duplicated')
+    assert.not.ok(newContent.includes('## Usage'), 'unselected sibling was excluded')
+    assert.not.ok(newContent.includes('## License'), 'unselected license was excluded')
+  } finally {
+    await close(server)
+  }
+})
+
+test.run()

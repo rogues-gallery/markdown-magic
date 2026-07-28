@@ -1,0 +1,282 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [4.11.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.10.5...markdown-magic@4.11.0) (2026-06-29)
+
+
+### Features
+
+* **core:** cache remote GitHub fetches ([a41aa9e](https://github.com/DavidWells/markdown-magic/commit/a41aa9e001878b38a043930258da5149784165e6))
+
+
+
+
+
+## [4.10.5](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.10.4...markdown-magic@4.10.5) (2026-06-27)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.10.4](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.10.3...markdown-magic@4.10.4) (2026-06-23)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.10.3](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.10.2...markdown-magic@4.10.3) (2026-06-23)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.10.2](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.10.1...markdown-magic@4.10.2) (2026-06-23)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.10.1](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.10.0...markdown-magic@4.10.1) (2026-06-23)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+# [4.10.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.9.0...markdown-magic@4.10.0) (2026-06-23)
+
+
+### Features
+
+* **markdown:** add section extraction options ([4107bac](https://github.com/DavidWells/markdown-magic/commit/4107baca2deb73611cda087c7c707a27aa9b61fd))
+
+
+
+
+
+# [4.9.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.8.0...markdown-magic@4.9.0) (2026-05-30)
+
+
+### Features
+
+* add dx-args parser package ([53bbfc1](https://github.com/DavidWells/markdown-magic/commit/53bbfc157a98ae26b20b4e4f64b08ccbce4494a9))
+
+
+
+
+
+# [4.8.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.7.0...markdown-magic@4.8.0) (2026-01-19)
+
+
+### Features
+
+* **core:** pass normalizeBlankLines option through to block-transformer ([5b04d6d](https://github.com/DavidWells/markdown-magic/commit/5b04d6d7abe60c15ff126c9f58ad1f7c082118ef))
+
+
+
+
+
+# [4.7.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.6.2...markdown-magic@4.7.0) (2026-01-19)
+
+
+### Features
+
+* **core:** pass forceRemoveComments option through to block-transformer ([b120f46](https://github.com/DavidWells/markdown-magic/commit/b120f46831d2d5a390e4589dae81e989fcd16c87))
+
+
+
+
+
+## [4.6.2](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.6.1...markdown-magic@4.6.2) (2026-01-19)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.6.1](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.6.0...markdown-magic@4.6.1) (2026-01-19)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+# [4.6.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.8...markdown-magic@4.6.0) (2026-01-19)
+
+
+### Features
+
+* **core:** support single-comment mode with close: false ([a797f0e](https://github.com/DavidWells/markdown-magic/commit/a797f0ee5fc8fe67535981883f8342e17cf8d863))
+
+
+
+
+
+## [4.5.8](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.7...markdown-magic@4.5.8) (2026-01-19)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.5.7](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.6...markdown-magic@4.5.7) (2026-01-19)
+
+
+### Bug Fixes
+
+* enable pattern mode for custom open tags ([904d4dc](https://github.com/DavidWells/markdown-magic/commit/904d4dc391a36848d5bb142d54835423df0b9d05))
+
+
+
+
+
+## [4.5.6](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.5...markdown-magic@4.5.6) (2026-01-19)
+
+
+### Bug Fixes
+
+* **core:** auto-generate close tag when custom open specified ([68b95dc](https://github.com/DavidWells/markdown-magic/commit/68b95dcd740cfe8c4f6088d011600746edd1f238))
+
+
+
+
+
+## [4.5.5](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.4...markdown-magic@4.5.5) (2026-01-19)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.5.4](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.3...markdown-magic@4.5.4) (2026-01-19)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.5.3](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.2...markdown-magic@4.5.3) (2026-01-11)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.5.2](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.1...markdown-magic@4.5.2) (2026-01-11)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.5.1](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.5.0...markdown-magic@4.5.1) (2026-01-11)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+# [4.5.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.2.0...markdown-magic@4.5.0) (2026-01-09)
+
+
+### Features
+
+* **block-parser:** add firstArgIsType option ([e7067a2](https://github.com/DavidWells/markdown-magic/commit/e7067a28504578ad4b77e7da19cafe107508c85d))
+
+
+
+
+
+# [4.4.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.2.0...markdown-magic@4.4.0) (2026-01-09)
+
+
+### Features
+
+* **block-parser:** add firstArgIsType option ([e7067a2](https://github.com/DavidWells/markdown-magic/commit/e7067a28504578ad4b77e7da19cafe107508c85d))
+
+
+
+
+
+# [4.3.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.2.0...markdown-magic@4.3.0) (2026-01-09)
+
+
+### Features
+
+* **block-parser:** add firstArgIsType option ([e7067a2](https://github.com/DavidWells/markdown-magic/commit/e7067a28504578ad4b77e7da19cafe107508c85d))
+
+
+
+
+
+# [4.2.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.1.0...markdown-magic@4.2.0) (2026-01-08)
+
+
+### Features
+
+* **cli:** add --json output, .md-ignore support, improve error msgs ([a5d3f6d](https://github.com/DavidWells/markdown-magic/commit/a5d3f6d926f26284f65e9e1004b74d169bde599b))
+
+
+
+
+
+# [4.1.0](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.0.5...markdown-magic@4.1.0) (2025-12-30)
+
+
+### Features
+
+* **cli:** add stdin/pipe support and custom comment keywords ([2e97eb3](https://github.com/DavidWells/markdown-magic/commit/2e97eb33362e470ea0aea06d7e538290884c1fd1))
+
+
+
+
+
+## [4.0.5](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.0.4...markdown-magic@4.0.5) (2025-12-30)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.0.4](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.0.3...markdown-magic@4.0.4) (2025-11-12)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## [4.0.3](https://github.com/DavidWells/markdown-magic/compare/markdown-magic@4.0.2...markdown-magic@4.0.3) (2025-11-03)
+
+**Note:** Version bump only for package markdown-magic
+
+
+
+
+
+## 4.0.2 (2025-10-25)
+
+
+### Bug Fixes
+
+* improve JSDoc type annotations in core package ([b05e10b](https://github.com/DavidWells/markdown-magic/commit/b05e10b81bcc29db7f637a9238a347d6493650e2))
